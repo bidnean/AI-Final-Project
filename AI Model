@@ -1,0 +1,63 @@
+#In command prompt, type 'python TrainAI.py RussianData_ia.csv TrainingSet.txt TestingSet.txt AIModel_ia.txt'
+
+import csv
+import random
+from numpy import array
+import numpy as np
+import sys
+from sklearn.naive_bayes import GaussianNB
+import pickle
+
+filename = "RussianData_ia.csv"
+
+fields = []
+matrix = []
+
+with open(filename, 'r') as csvfile:
+    csvreader = csv.reader(csvfile)
+    fields = next(csvreader)
+
+    for row in csvreader:
+        matrix.append(row)
+    #print("Total number of rows: %d"%(csvreader.line_num))
+
+
+
+#CODE TO CREATE AN AI AI MODEL
+random.shuffle(matrix)
+#print(matrix)
+#print(len(matrix))
+
+train_data = matrix[:int(0.8*len(matrix))]
+train_data = array(train_data)
+with open("TrainingSet.txt", "w+") as file:
+    for i in range(len(train_data)):
+        file.write(str(train_data[i]))
+#print(train_data)
+#print(type(train_data))
+
+
+test_data = matrix[int(0.8*len(matrix)):]
+test_data = array(test_data)
+with open("TestingSet.txt", "w+") as file2:
+    for i in range(len(test_data)):
+        file2.write(str(test_data[i]))
+#print(test_data)
+#print(type(test_data))
+
+def toMatrix(file):
+    fullMatrix = np.loadtxt(file, usecols=range(15), dtype=float)
+    return fullMatrix
+
+train_set = toMatrix("TrainingSet.txt")
+test_set = toMatrix("TestingSet.txt")
+
+#THIS PART IS FROM THE ORIGINAL LAB, AND I CAN'T FIGURE OUT HOW TO SLICE IT CORRECTLY
+#It should be fit(train_data, train_target) then predict(test_data)
+gnb = GaussianNB()
+#gnb = gnb.fit(train_data[:,1:], train_data[:,0])
+#y_pred = gnb.predict(test_data[:,1:])
+
+#pickle.dump( gnb, open( "AIModel", "wb" ))
+
+#print("Number of mislabeled points out of a total %d points : %d" % (train_data.shape[0],(test_data[:,0] != y_pred).sum()))
